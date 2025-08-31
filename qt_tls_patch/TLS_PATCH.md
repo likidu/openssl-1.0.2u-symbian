@@ -1,12 +1,12 @@
-Backport: TLS 1.1/1.2 support for Qt 4.7.4 with OpenSSL 1.0.2u
+# Backport: TLS 1.1/1.2 support for Qt 4.7.4 with OpenSSL 1.0.2u
 
-Overview
+## Overview
 
 - Adds TLS 1.1 and 1.2 to Qt 4.7.4’s SSL stack when used with OpenSSL 1.0.2u.
 - Keeps API/ABI stable; apps opt-in via QSsl::SslProtocol or use AnyProtocol.
 - Uses runtime symbol resolution; works with dynamically loaded 1.0.2u DLLs.
 
-What Changed
+## What Changed
 
 - New protocols: QSsl::TlsV1_1 and QSsl::TlsV1_2 in `src/network/ssl/qssl.h`.
 - Resolver: Declares and resolves `TLSv1_1_*_method` and `TLSv1_2_*_method` in
@@ -38,7 +38,7 @@ What Changed
 - This uses Qt’s runtime resolver (no link to import libs needed).
 - Build Qt normally after the patch:
   - Clean QtNetwork to be safe: `mingw32-make -C src/network clean`
-  - Rebuild: from repo root, run `configure -platform win32-g++ -opensource -confirm-license -openssl-linked -I C:\\Users\\Liki\\Repos\\openssl-1.0.2u-symbian\\include -L C:\\Users\\Liki\\Repos\\openssl-1.0.2u-symbian\\lib` then `mingw32-make` (or rebuild just QtNetwork and its deps).
+  - Rebuild: from repo root, run `configure -platform win32-g++ -opensource -confirm-license` then `mingw32-make` (or rebuild just QtNetwork and its deps).
 - At runtime, ensure `ssleay32.dll` and `libeay32.dll` from your 1.0.2u build are on PATH or next to your application executable at runtime.
 
 ### Option B — link against OpenSSL
