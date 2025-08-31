@@ -91,3 +91,28 @@ Or
 ```ps
 powershell -ExecutionPolicy Bypass -File diff\apply_combined_tls.ps1
 ```
+
+## Switch
+
+### Approach 1: Keep Conservative Default
+
+- Behavior: Default remains legacy `QSsl::SslV3`. Apps opt-in to TLS 1.1/1.2 by calling `setProtocol(QSsl::TlsV1_1)` or `setProtocol(QSsl::TlsV1_2)`, or use `AnyProtocol` to negotiate.
+- Code changes: No additional code changes beyond the TLS 1.1/1.2 backport you already have.
+- Docs: No change.
+
+### Approach 2: Switch Default To AnyProtocol
+
+- Behavior: Default changes to `QSsl::AnyProtocol` so Qt negotiates the highest version supported (including TLS 1.1/1.2 with OpenSSL 1.0.2u) without app changes.
+- Code changes: Small, targeted updates in the configuration default and documentation.
+
+Patch file: `diff/switch_default_to_anyprotocol.patch`
+
+Apply:
+
+- If you have GNU patch: `patch -p1 < diff/switch_default_to_anyprotocol.patch`
+- Or with Git: `git apply --reject --whitespace=fix diff/switch_default_to_anyprotocol.patch`
+
+### Recommendation
+
+- If you want drop-in modern behavior for apps you can’t modify, use Approach 2 (switch default).
+- If you prefer API conservatism and explicit control per app, use Approach 1.

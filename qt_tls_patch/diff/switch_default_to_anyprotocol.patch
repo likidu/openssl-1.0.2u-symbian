@@ -1,0 +1,47 @@
+--- a/src/network/ssl/qsslconfiguration_p.h
++++ b/src/network/ssl/qsslconfiguration_p.h
+@@
+     QSslConfigurationPrivate()
+-        : protocol(QSsl::SslV3),
++        : protocol(QSsl::AnyProtocol),
+           peerVerifyMode(QSslSocket::AutoVerifyPeer),
+           peerVerifyDepth(0)
+     { }
+
+--- a/src/network/ssl/qsslconfiguration.cpp
++++ b/src/network/ssl/qsslconfiguration.cpp
+@@
+ QSsl::SslProtocol QSslConfiguration::protocol() const
+ {
+-    return d ? d->protocol : QSsl::SslV3;
++    return d ? d->protocol : QSsl::AnyProtocol;
+ }
+@@
+-      \o protocol SSLv3
++      \o protocol AnyProtocol (negotiate highest supported)
+
+--- a/src/network/ssl/qssl.cpp
++++ b/src/network/ssl/qssl.cpp
+@@
+-    \value SslV3 SSLv3 - the default protocol.
++    \value SslV3 SSLv3.
+     \value SslV2 SSLv2
+     \value TlsV1 TLSv1
+     \value UnknownProtocol The cipher's protocol cannot be determined.
+-    \value AnyProtocol The socket understands SSLv2, SSLv3, and TLSv1. This
+-    value is used by QSslSocket only.
++    \value AnyProtocol The socket understands SSLv2, SSLv3, TLSv1, and newer
++    TLS versions supported by the SSL backend. This value is used by QSslSocket
++    only and is the default protocol.
+
+--- a/src/network/ssl/qsslsocket.cpp
++++ b/src/network/ssl/qsslsocket.cpp
+@@
+-    SSLv3 and TLSv1. By default, QSslSocket uses SSLv3, but you can
++    SSLv3 and TLSv1. By default, QSslSocket uses AnyProtocol and negotiates
++    the highest supported version, but you can
+     change the SSL protocol by calling setProtocol() as long as you do
+@@
+-    Returns the socket's SSL protocol. By default, \l QSsl::SslV3 is used.
++    Returns the socket's SSL protocol. By default, \l QSsl::AnyProtocol is used.
+
