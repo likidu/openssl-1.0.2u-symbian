@@ -1,0 +1,8 @@
+Building OpenSSL
+gcc -o tmp\aes_ecb.o  -Ioutinc -Itmp -DL_ENDIAN -DDSO_WIN32 -fomit-frame-pointer -O3 -mcpu=i486 -Wall -DOPENSSL_NO_RC5 -DOPENSSL_NO_MD2 -DOPENSSL_NO_SSL2 -DOPENSSL_NO_KRB5 -DOPENSSL_NO_JPAKE -DOPENSSL_NO_WEAK_SSL_CIPHERS -DOPENSSL_NO_DYNAMIC_ENGINE      -c .\crypto\aes\aes_ecb.c
+In file included from .\crypto\aes\aes_ecb.c:59:
+outinc/openssl/aes.h:105: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+outinc/openssl/aes.h:107: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+outinc/openssl/aes.h:110: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+`-mcpu=' is deprecated. Use `-mtune=' or '-march=' instead.
+mingw32-make: *** [tmp\aes_ecb.o] Error 1

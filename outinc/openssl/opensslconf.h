@@ -14,6 +14,17 @@ extern "C" {
 #ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
 # define OPENSSL_NO_EC_NISTP_64_GCC_128
 #endif
+/*
+ * Symbian overlay adds IMPORT_C/EXPORT_C annotations to public headers.
+ * When building for non-Symbian targets (e.g. MinGW/Qt Simulator), make
+ * these macros no-ops so prototypes parse correctly.
+ */
+#ifndef IMPORT_C
+# define IMPORT_C
+#endif
+#ifndef EXPORT_C
+# define EXPORT_C
+#endif
 #ifndef OPENSSL_NO_GMP
 # define OPENSSL_NO_GMP
 #endif

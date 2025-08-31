@@ -81,10 +81,10 @@ if errorlevel 1 goto end
 echo Generating the DLLs and input libraries
 dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32
 if errorlevel 1 goto end
-dllwrap --dllname libssl32.dll --output-lib out/libssl32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a
+rem Generate the SSL DLL with the legacy name expected by Qt 4
+dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a
 if errorlevel 1 goto end
 
 echo Done compiling OpenSSL
 
 :end
-

@@ -1041,7 +1041,7 @@ int CRYPTO_memcmp(const volatile void *in_a, const volatile void *in_b, size_t l
     return x;
 }
 
-#ifndef __ARMCC_4_0__
+#if (defined(__SYMBIAN32__) || defined(__arm__) || defined(__ARMCC_VERSION)) && !defined(__ARMCC_4_0__)
 extern int __aeabi_uidivmod(unsigned int a, unsigned int b);
 extern int __aeabi_idivmod(int a, int b);
 int __aeabi_idiv(int a, int b)

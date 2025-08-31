@@ -1,0 +1,14 @@
+--- a/src/network/ssl/qssl.h
++++ b/src/network/ssl/qssl.h
+@@
+     enum SslProtocol {
+         SslV3,
+         SslV2,
+         TlsV1,
+         AnyProtocol,
+         // Backported extensions for newer TLS versions
+         TlsV1_1,
+         TlsV1_2,
+         UnknownProtocol = -1
+     };
+
