@@ -24,8 +24,8 @@ Patched headers to handle Symbian macros and fixed an ARM-only shim that broke M
   - Or only for current session: `$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`.
 - Built static libs: `mingw32-make -f ms/mingw32a.mak -j8` (after the fixes above).
 - Wrapped DLLs:
-  - `dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -o out/libeay32.dll`
-  - `dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a -o out/ssleay32.dll`
+  - `dllwrap --verbose --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -o out/libeay32.dll`
+  - `dllwrap --verbose --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a -o out/ssleay32.dll`
 
 `mingw32.bat`
 
