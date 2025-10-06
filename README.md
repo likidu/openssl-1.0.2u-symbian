@@ -21,26 +21,24 @@ Patched headers to handle Symbian macros and fixed an ARM-only shim that broke M
 ### Build commands (what I ran)
 
 - Used Qt SDK MinGW: prepended `C:\Symbian\QtSDK\mingw\bin` to PATH for the session.
-- Built static libs: `mingw32-make -f ms/mingw32a.mak` (after the fixes above).
+  - Or only for current session: `$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`.
+- Built static libs: `mingw32-make -f ms/mingw32a.mak -j8` (after the fixes above).
 - Wrapped DLLs:
-  - `dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32`
-  - `dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a`
+  - `dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -o out/libeay32.dll`
+  - `dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a -o out/ssleay32.dll`
 
 `mingw32.bat`
 
 ### Outputs
 
-- DLLs (repo root): `libeay32.dll`, `ssleay32.dll`
+- DLLs: `out\libeay32.dll`, `out\ssleay32.dll`
 - Import libs: `out\libeay32.a`, `out\libssleay32.a`
 - Static libs: `out\libcrypto.a`, `out\libssl.a`
-- Tools/tests were also built (e.g., `openssl.exe` , various `*test.exe`)
+- Tools/tests were also built (e.g., `out\openssl.exe`, various `out\*test.exe`)
+- dllwrap/dlltool prints a warning about stripping path components from `--dllname`; this is expected because the actual output path comes from the `-o out\*.dll` argument.
 
 ### How to link in Qt 4 Simulator
 
 - Include path: INCLUDEPATH += C:\Users\Liki\Repos\openssl-1.0.2u-symbian\outinc
 - Libs: LIBS += -LC:\Users\Liki\Repos\openssl-1.0.2u-symbian\out -lssleay32 -leay32
-- Runtime: place `ssleay32.dll` and `libeay32.dll` alongside your simulator app or in the simulator’s `bin` directory (or add repo root to PATH).
-
-### Others
-
-`$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`
+- Runtime: place `out\ssleay32.dll` and `out\libeay32.dll` alongside your simulator app or in the simulator’s `bin` directory (or add repo root to PATH).
