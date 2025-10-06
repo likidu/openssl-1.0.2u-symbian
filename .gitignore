@@ -1,4 +1,5 @@
 # Build output directory
+tmp/
 out/
 
 /*.dll

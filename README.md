@@ -12,7 +12,6 @@ Example robocopy (PowerShell/cmd), adjust <openssl-symbian> and <openssl>:
 
 Patched headers to handle Symbian macros and fixed an ARM-only shim that broke MinGW, then built the libs and produced the Qt 4–style DLLs.
 
-- `ms\mingw32.bat`: emits `ssleay32.dll` and `out\libssleay32.a` instead of `libssl32.dll`.
 - `include\openssl\e_os2.h:328`: defines `IMPORT_C/EXPORT_C` as no-ops for non‑Symbian builds.
 - `outinc\openssl\e_os2.h`: same no-op defines so current build picks them up.
 - `outinc\openssl\opensslconf.h`: adds no-op `IMPORT_C/EXPORT_C` to cover headers that include `opensslconf.h` only (e.g., `aes.h`).
@@ -20,27 +19,31 @@ Patched headers to handle Symbian macros and fixed an ARM-only shim that broke M
 
 ### Build commands (what I ran)
 
-- Used Qt SDK MinGW: prepended `C:\Symbian\QtSDK\mingw\bin` to PATH for the session.
-- Built static libs: `mingw32-make -f ms/mingw32a.mak` (after the fixes above).
-- Wrapped DLLs:
-  - `dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32`
-  - `dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a`
+For convenience there is also `build-openssl.ps1`, which runs the same steps (with optional `-MinGWBinPath` and `-Jobs`).
 
-`mingw32.bat`
+```powershell
+# run from repo root
+.\build-openssl.ps1
+.\build-openssl.ps1 -MinGWBinPath 'C:\Symbian\QtSDK\mingw\bin' -Jobs 8
+```
+
+- Used Qt SDK MinGW: prepended `C:\Symbian\QtSDK\mingw\bin` to PATH for the session.
+  - Or only for current session: `$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`.
+- Built static libs: `mingw32-make -f ms/mingw32a.mak -j8` (after the fixes above).
+- Wrapped DLLs:
+  - `dllwrap --verbose --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -o out/libeay32.dll`
+  - `dllwrap --verbose --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a -o out/ssleay32.dll`
 
 ### Outputs
 
-- DLLs (repo root): `libeay32.dll`, `ssleay32.dll`
+- DLLs: `out\libeay32.dll`, `out\ssleay32.dll`
 - Import libs: `out\libeay32.a`, `out\libssleay32.a`
 - Static libs: `out\libcrypto.a`, `out\libssl.a`
-- Tools/tests were also built (e.g., `openssl.exe` , various `*test.exe`)
+- Tools/tests were also built (e.g., `out\openssl.exe`, various `out\*test.exe`)
+- dllwrap/dlltool prints a warning about stripping path components from `--dllname`; this is expected because the actual output path comes from the `-o out\*.dll` argument.
 
 ### How to link in Qt 4 Simulator
 
 - Include path: INCLUDEPATH += C:\Users\Liki\Repos\openssl-1.0.2u-symbian\outinc
 - Libs: LIBS += -LC:\Users\Liki\Repos\openssl-1.0.2u-symbian\out -lssleay32 -leay32
-- Runtime: place `ssleay32.dll` and `libeay32.dll` alongside your simulator app or in the simulator’s `bin` directory (or add repo root to PATH).
-
-### Others
-
-`$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`
+- Runtime: place `out\ssleay32.dll` and `out\libeay32.dll` alongside your simulator app or in the simulator’s `bin` directory (or add repo root to PATH).
