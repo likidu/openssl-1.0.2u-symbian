@@ -14,8 +14,14 @@
     Overrides the number of parallel jobs passed to `mingw32-make`. Defaults to
     the number of logical processors.
 
+.PARAMETER Clean
+    Runs `mingw32-make -f ms/mingw32a.mak clean`, automatically answers the confirmation prompt, and skips the build and wrapping stages.
+
 .EXAMPLE
     .\build-openssl.ps1
+
+.EXAMPLE
+    .\build-openssl.ps1 -Clean
 
 .EXAMPLE
     .\build-openssl.ps1 -MinGWBinPath 'C:\Symbian\QtSDK\mingw\bin' -Jobs 8
@@ -23,7 +29,8 @@
 
 param(
     [string]$MinGWBinPath,
-    [int]$Jobs = [Environment]::ProcessorCount
+    [int]$Jobs = [Environment]::ProcessorCount,
+    [switch]$Clean
 )
 
 function Write-Info { param([string]$Message) Write-Host "[INFO] $Message" -ForegroundColor Cyan }
@@ -55,6 +62,18 @@ try {
     if ($Jobs -lt 1) {
         $Jobs = 1
         Write-Warn "Jobs parameter must be at least 1. Using 1 instead."
+    }
+
+    if ($Clean) {
+        $cleanArgs = @('-f', 'ms/mingw32a.mak', 'clean')
+        Write-Step ("Running mingw32-make {0}" -f ($cleanArgs -join ' '))
+        # Auto-confirm the clean prompt.
+        'y' | & mingw32-make @cleanArgs
+        if ($LASTEXITCODE -ne 0) {
+            throw "mingw32-make clean failed with exit code $LASTEXITCODE"
+        }
+        Write-Success "Cleanup completed successfully."
+        return
     }
 
     $makeArgs = @('-f', 'ms/mingw32a.mak')
