@@ -1,3 +1,5 @@
+# OpenSSL 1.0.2u modified for Qt on Symbian^3
+
 Copy modified sources/headers from [`openssl-symbian`](https://github.com/shinovon/openssl-symbian) into the official tree, but do NOT overwrite generated config headers or build files:
 
 Example robocopy (PowerShell/cmd), adjust <openssl-symbian> and <openssl>:
@@ -23,6 +25,8 @@ Patched headers to handle Symbian macros and fixed an ARM-only shim that broke M
 - Wrapped DLLs:
   - `dllwrap --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32`
   - `dllwrap --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a`
+
+`mingw32.bat`
 
 ### Outputs
 
