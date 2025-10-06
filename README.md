@@ -12,7 +12,6 @@ Example robocopy (PowerShell/cmd), adjust <openssl-symbian> and <openssl>:
 
 Patched headers to handle Symbian macros and fixed an ARM-only shim that broke MinGW, then built the libs and produced the Qt 4–style DLLs.
 
-- `ms\mingw32.bat`: emits `ssleay32.dll` and `out\libssleay32.a` instead of `libssl32.dll`.
 - `include\openssl\e_os2.h:328`: defines `IMPORT_C/EXPORT_C` as no-ops for non‑Symbian builds.
 - `outinc\openssl\e_os2.h`: same no-op defines so current build picks them up.
 - `outinc\openssl\opensslconf.h`: adds no-op `IMPORT_C/EXPORT_C` to cover headers that include `opensslconf.h` only (e.g., `aes.h`).
@@ -20,14 +19,20 @@ Patched headers to handle Symbian macros and fixed an ARM-only shim that broke M
 
 ### Build commands (what I ran)
 
+For convenience there is also `build-openssl.ps1`, which runs the same steps (with optional `-MinGWBinPath` and `-Jobs`).
+
+```powershell
+# run from repo root
+.\build-openssl.ps1
+.\build-openssl.ps1 -MinGWBinPath 'C:\Symbian\QtSDK\mingw\bin' -Jobs 8
+```
+
 - Used Qt SDK MinGW: prepended `C:\Symbian\QtSDK\mingw\bin` to PATH for the session.
   - Or only for current session: `$env:PATH = "C:\Symbian\QtSDK\mingw\bin;$env:PATH"`.
 - Built static libs: `mingw32-make -f ms/mingw32a.mak -j8` (after the fixes above).
 - Wrapped DLLs:
   - `dllwrap --verbose --dllname libeay32.dll --output-lib out/libeay32.a --def ms/libeay32.def out/libcrypto.a -lws2_32 -lgdi32 -o out/libeay32.dll`
   - `dllwrap --verbose --dllname ssleay32.dll --output-lib out/libssleay32.a --def ms/ssleay32.def out/libssl.a out/libeay32.a -o out/ssleay32.dll`
-
-`mingw32.bat`
 
 ### Outputs
 
